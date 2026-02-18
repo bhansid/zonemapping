@@ -1,0 +1,26 @@
+/* Fix Leaflet Draw icons for Vite / React */
+
+.leaflet-draw-toolbar a {
+  background-image: url("https://unpkg.com/leaflet-draw@1.0.4/dist/images/spritesheet.png") !important;
+}
+
+.leaflet-retina .leaflet-draw-toolbar a {
+  background-image: url("https://unpkg.com/leaflet-draw@1.0.4/dist/images/spritesheet-2x.png") !important;
+  background-size: 270px 30px !important;
+}
+
+.leaflet-draw-toolbar .leaflet-draw-draw-polygon {
+  background-position: -30px 0;
+}
+
+.leaflet-draw-toolbar .leaflet-draw-draw-circle {
+  background-position: -120px 0;
+}
+
+.leaflet-draw-toolbar .leaflet-draw-edit-edit {
+  background-position: -150px 0;
+}
+
+.leaflet-draw-toolbar .leaflet-draw-edit-remove {
+  background-position: -180px 0;
+}
