@@ -12,13 +12,15 @@ export default function AdminListView({ retailers, onSelect }: any) {
   const [filterAgent, setFilterAgent] = useState("");
   const [filterArea, setFilterArea] = useState("");
 
-  // FILTER LOGIC (default = show all)
+  // SAFE FILTER LOGIC (NO CRASH)
   const filteredRetailers = retailers.filter((r: any) => {
+    const search = searchText.toLowerCase();
+
     const textMatch =
       !searchText ||
-      r.Retailer_Name?.toLowerCase().includes(searchText.toLowerCase()) ||
-      r.Owner_Name?.toLowerCase().includes(searchText.toLowerCase()) ||
-      r.Phone?.toLowerCase().includes(searchText.toLowerCase());
+      String(r.Retailer_Name || "").toLowerCase().includes(search) ||
+      String(r.Owner_Name || "").toLowerCase().includes(search) ||
+      String(r.Phone || "").toLowerCase().includes(search);
 
     const zoneMatch =
       !filterZone || r.Zone_Name === filterZone;
@@ -123,14 +125,19 @@ export default function AdminListView({ retailers, onSelect }: any) {
           <div>{r.Area}, {r.City}, {r.State}</div>
           <div>{r.Assigned_Agent}</div>
 
-          {/* MAP PIN */}
+          {/* GOOGLE MAP LINK */}
           <div
             onClick={e => {
               e.stopPropagation();
-              onSelect(r);
+              if (r.Latitude && r.Longitude) {
+                window.open(
+                  `https://www.google.com/maps?q=${r.Latitude},${r.Longitude}`,
+                  "_blank"
+                );
+              }
             }}
             style={{ cursor: "pointer" }}
-            title="View on map"
+            title="Open in Google Maps"
           >
             📍
           </div>
@@ -201,6 +208,7 @@ export default function AdminListView({ retailers, onSelect }: any) {
     </div>
   );
 }
+
 
 
 
