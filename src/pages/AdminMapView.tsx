@@ -12,6 +12,31 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-draw";
 import "leaflet-draw/dist/leaflet.draw.css";
 
+// FIX: Leaflet marker icons for Vite + TS
+const markerIcon2x = new URL(
+  "leaflet/dist/images/marker-icon-2x.png",
+  import.meta.url
+).href;
+
+const markerIcon = new URL(
+  "leaflet/dist/images/marker-icon.png",
+  import.meta.url
+).href;
+
+const markerShadow = new URL(
+  "leaflet/dist/images/marker-shadow.png",
+  import.meta.url
+).href;
+
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
+
+
 const API =
   "https://script.google.com/macros/s/AKfycbwcSAM75mzot0MPQT3Fu2qnryIcMY4ZacYF34yjrBIIwMHoaZ-qhtDa61eMTjynhI5axA/exec";
 
