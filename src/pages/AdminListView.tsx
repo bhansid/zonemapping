@@ -6,8 +6,81 @@ const GRID = "1.6fr 2fr 1.6fr 3fr 1.5fr 1fr 1fr";
 export default function AdminListView({ retailers, onSelect }: any) {
   const [images, setImages] = useState<string[] | null>(null);
 
+  // FILTER STATES
+  const [searchText, setSearchText] = useState("");
+  const [filterZone, setFilterZone] = useState("");
+  const [filterAgent, setFilterAgent] = useState("");
+  const [filterArea, setFilterArea] = useState("");
+
+  // FILTER LOGIC (default = show all)
+  const filteredRetailers = retailers.filter((r: any) => {
+    const textMatch =
+      !searchText ||
+      r.Retailer_Name?.toLowerCase().includes(searchText.toLowerCase()) ||
+      r.Owner_Name?.toLowerCase().includes(searchText.toLowerCase()) ||
+      r.Phone?.toLowerCase().includes(searchText.toLowerCase());
+
+    const zoneMatch =
+      !filterZone || r.Zone_Name === filterZone;
+
+    const agentMatch =
+      !filterAgent || r.Assigned_Agent === filterAgent;
+
+    const areaMatch =
+      !filterArea || r.Area === filterArea;
+
+    return textMatch && zoneMatch && agentMatch && areaMatch;
+  });
+
   return (
     <div style={{ padding: 20, background: "#f8fafc", height: "100%" }}>
+
+      {/* FILTER BAR */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+        <input
+          placeholder="Search retailer / owner / phone"
+          value={searchText}
+          onChange={e => setSearchText(e.target.value)}
+        />
+
+        <select
+          value={filterZone}
+          onChange={e => setFilterZone(e.target.value)}
+        >
+          <option value="">All Zones</option>
+          {[...new Set(retailers.map((r: any) => r.Zone_Name).filter(Boolean))].map(
+            (z: string) => (
+              <option key={z} value={z}>{z}</option>
+            )
+          )}
+        </select>
+
+        <select
+          value={filterAgent}
+          onChange={e => setFilterAgent(e.target.value)}
+        >
+          <option value="">All Agents</option>
+          {[...new Set(retailers.map((r: any) => r.Assigned_Agent).filter(Boolean))].map(
+            (a: string) => (
+              <option key={a} value={a}>{a}</option>
+            )
+          )}
+        </select>
+
+        <select
+          value={filterArea}
+          onChange={e => setFilterArea(e.target.value)}
+        >
+          <option value="">All Areas</option>
+          {[...new Set(retailers.map((r: any) => r.Area).filter(Boolean))].map(
+            (area: string) => (
+              <option key={area} value={area}>{area}</option>
+            )
+          )}
+        </select>
+      </div>
+
+      {/* HEADER */}
       <div
         style={{
           display: "grid",
@@ -28,7 +101,8 @@ export default function AdminListView({ retailers, onSelect }: any) {
         <div>Images</div>
       </div>
 
-      {retailers.map((r: any, i: number) => (
+      {/* ROWS */}
+      {filteredRetailers.map((r: any, i: number) => (
         <div
           key={i}
           onClick={() => onSelect(r)}
@@ -48,7 +122,20 @@ export default function AdminListView({ retailers, onSelect }: any) {
           <div>{r.Owner_Name}</div>
           <div>{r.Area}, {r.City}, {r.State}</div>
           <div>{r.Assigned_Agent}</div>
-          <div>📍</div>
+
+          {/* MAP PIN */}
+          <div
+            onClick={e => {
+              e.stopPropagation();
+              onSelect(r);
+            }}
+            style={{ cursor: "pointer" }}
+            title="View on map"
+          >
+            📍
+          </div>
+
+          {/* IMAGES */}
           <div>
             {r.Shop_Images && (
               <button
@@ -69,6 +156,7 @@ export default function AdminListView({ retailers, onSelect }: any) {
         </div>
       ))}
 
+      {/* IMAGE LINKS MODAL */}
       {images && (
         <div
           style={{
