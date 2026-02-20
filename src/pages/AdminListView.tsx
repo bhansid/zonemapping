@@ -12,7 +12,7 @@ export default function AdminListView({ retailers, onSelect }: any) {
   const [filterAgent, setFilterAgent] = useState("");
   const [filterArea, setFilterArea] = useState("");
 
-  // SAFE FILTER LOGIC (NO CRASH)
+  // SAFE FILTER LOGIC
   const filteredRetailers = retailers.filter((r: any) => {
     const search = searchText.toLowerCase();
 
@@ -35,7 +35,15 @@ export default function AdminListView({ retailers, onSelect }: any) {
   });
 
   return (
-    <div style={{ padding: 20, background: "#f8fafc", height: "100%" }}>
+    <div
+      style={{
+        padding: 20,
+        background: "#f8fafc",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
 
       {/* FILTER BAR */}
       <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
@@ -92,6 +100,7 @@ export default function AdminListView({ retailers, onSelect }: any) {
           background: "#fff",
           borderRadius: 10,
           marginBottom: 8,
+          flexShrink: 0,
         }}
       >
         <div>Added On</div>
@@ -103,65 +112,73 @@ export default function AdminListView({ retailers, onSelect }: any) {
         <div>Images</div>
       </div>
 
-      {/* ROWS */}
-      {filteredRetailers.map((r: any, i: number) => (
-        <div
-          key={i}
-          onClick={() => onSelect(r)}
-          style={{
-            display: "grid",
-            gridTemplateColumns: GRID,
-            padding: "14px 16px",
-            background: "#fff",
-            borderRadius: 10,
-            marginBottom: 6,
-            cursor: "pointer",
-            alignItems: "center",
-          }}
-        >
-          <div>{formatDate(r["Added On"])}</div>
-          <div><b>{r.Retailer_Name}</b></div>
-          <div>{r.Owner_Name}</div>
-          <div>{r.Area}, {r.City}, {r.State}</div>
-          <div>{r.Assigned_Agent}</div>
-
-          {/* GOOGLE MAP LINK */}
+      {/* SCROLLABLE ROW CONTAINER */}
+      <div
+        style={{
+          overflowY: "auto",
+          flex: 1,
+          paddingRight: 6,
+        }}
+      >
+        {filteredRetailers.map((r: any, i: number) => (
           <div
-            onClick={e => {
-              e.stopPropagation();
-              if (r.Latitude && r.Longitude) {
-                window.open(
-                  `https://www.google.com/maps?q=${r.Latitude},${r.Longitude}`,
-                  "_blank"
-                );
-              }
+            key={i}
+            onClick={() => onSelect(r)}
+            style={{
+              display: "grid",
+              gridTemplateColumns: GRID,
+              padding: "14px 16px",
+              background: "#fff",
+              borderRadius: 10,
+              marginBottom: 6,
+              cursor: "pointer",
+              alignItems: "center",
             }}
-            style={{ cursor: "pointer" }}
-            title="Open in Google Maps"
           >
-            📍
-          </div>
+            <div>{formatDate(r["Added On"])}</div>
+            <div><b>{r.Retailer_Name}</b></div>
+            <div>{r.Owner_Name}</div>
+            <div>{r.Area}, {r.City}, {r.State}</div>
+            <div>{r.Assigned_Agent}</div>
 
-          {/* IMAGES */}
-          <div>
-            {r.Shop_Images && (
-              <button
-                onClick={e => {
-                  e.stopPropagation();
-                  setImages(
-                    r.Shop_Images
-                      .split(",")
-                      .map((x: string) => x.trim())
-                      .filter(Boolean)
+            {/* GOOGLE MAP LINK */}
+            <div
+              onClick={e => {
+                e.stopPropagation();
+                if (r.Latitude && r.Longitude) {
+                  window.open(
+                    `https://www.google.com/maps?q=${r.Latitude},${r.Longitude}`,
+                    "_blank"
                   );
-                }}
-              >
-                Images
-              </button>
-            )}
+                }
+              }}
+              style={{ cursor: "pointer" }}
+              title="Open in Google Maps"
+            >
+              📍
+            </div>
+
+            {/* IMAGES */}
+            <div>
+              {r.Shop_Images && (
+                <button
+                  onClick={e => {
+                    e.stopPropagation();
+                    setImages(
+                      r.Shop_Images
+                        .split(",")
+                        .map((x: string) => x.trim())
+                        .filter(Boolean)
+                    );
+                  }}
+                >
+                  Images
+                </button>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
       {/* IMAGE LINKS MODAL */}
       {images && (
@@ -208,8 +225,6 @@ export default function AdminListView({ retailers, onSelect }: any) {
     </div>
   );
 }
-
-
 
 
 
