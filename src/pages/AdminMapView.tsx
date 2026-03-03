@@ -394,12 +394,15 @@ export default function AdminMapView({
   }
   zoom={latest ? 15 : 6}
   minZoom={3}
-  maxZoom={22}
+  maxZoom={19}
   scrollWheelZoom={true}
   zoomControl={true}
   style={{ height: "100%", width: "100%" }}
 >
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      <TileLayer
+  url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+  maxZoom={20}
+/>
         <AutoZoom latest={latest} />
 
         {!measureOn &&
