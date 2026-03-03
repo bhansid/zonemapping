@@ -386,26 +386,36 @@ export default function AdminMapView({
 
   return (
     <div style={{ height: "100%", position: "relative" }}>
-      <MapContainer
-        center={
-          latest
-            ? [+latest.Latitude, +latest.Longitude]
-            : [0.0236, 37.9062]
-        }
-        zoom={latest ? 15 : 6}
-        style={{ height: "100%", width: "100%" }}
-      >
+     <MapContainer
+  center={
+    latest
+      ? [+latest.Latitude, +latest.Longitude]
+      : [0.0236, 37.9062]
+  }
+  zoom={latest ? 15 : 6}
+  minZoom={3}
+  maxZoom={22}
+  scrollWheelZoom={true}
+  zoomControl={true}
+  style={{ height: "100%", width: "100%" }}
+>
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <AutoZoom latest={latest} />
 
         {!measureOn &&
           valid.map((r: any, i: number) => (
             <Marker key={i} position={[+r.Latitude, +r.Longitude]}>
-              <Popup>
-                <strong>{r.Retailer_Name}</strong>
-                <br />
-                {r.Area}, {r.City}
-              </Popup>
+             <Popup>
+  <div style={{ minWidth: 180 }}>
+    <strong>{r.Retailer_Name}</strong>
+    <br />
+    Owner: {r.Owner_Name || "-"}
+    <br />
+    Phone: {r.Phone || "-"}
+    <br />
+    {r.Area}, {r.City}
+  </div>
+</Popup>
             </Marker>
           ))}
 
