@@ -294,6 +294,22 @@ export default function AdminMapView({
   );
   const latest = valid.length ? valid[valid.length - 1] : null;
 
+/* ================= MAP STATS ================= */
+
+const totalRetailers = valid.length;
+
+let radiusCovered = 0;
+
+if (valid.length > 1) {
+  const first = valid[0];
+  const last = valid[valid.length - 1];
+
+  radiusCovered =
+    L.latLng(+first.Latitude, +first.Longitude).distanceTo(
+      L.latLng(+last.Latitude, +last.Longitude)
+    ) / 1000;
+}
+
   /* LOAD ZONES */
   useEffect(() => {
     fetch(`${API}?action=zones`)
@@ -470,6 +486,14 @@ export default function AdminMapView({
           </button>
         </div>
       )}
+{/* MAP STATS */}
+<div style={statsBox}>
+  <div>Total Retailers: {totalRetailers}</div>
+  <div>
+    Radius Covered: {radiusCovered.toFixed(2)} km
+  </div>
+</div>
+      
 
       {/* CREATE ZONE MODAL */}
       {newZone && (
@@ -582,4 +606,15 @@ const toastStyle = {
   padding: "10px 16px",
   borderRadius: 10,
   zIndex: 10001,
+};
+const statsBox = {
+  position: "absolute" as const,
+  bottom: 100,
+  right: 20,
+  background: "#fff",
+  padding: "12px 14px",
+  borderRadius: 10,
+  boxShadow: "0 4px 14px rgba(0,0,0,0.18)",
+  zIndex: 9999,
+  fontWeight: 600,
 };
