@@ -424,15 +424,35 @@ if (valid.length > 1) {
         {!measureOn &&
           valid.map((r: any, i: number) => (
             <Marker key={i} position={[+r.Latitude, +r.Longitude]}>
-             <Popup>
-  <div style={{ minWidth: 180 }}>
-    <strong>{r.Retailer_Name}</strong>
+            <Popup>
+  <div style={{ minWidth: 200, lineHeight: "1.4" }}>
+    <strong>{r.Retailer_Name || "Unnamed Shop"}</strong>
     <br />
-    Owner: {r.Owner_Name || "-"}
+
+    <span>Owner: {r.Owner_Name || "-"}</span>
     <br />
-    Phone: {r.Phone || "-"}
+
+    {r.Phone ? (
+      <a href={`tel:${r.Phone}`} style={{ color: "#2563eb" }}>
+        📞 {r.Phone}
+      </a>
+    ) : (
+      <span>Phone: -</span>
+    )}
     <br />
-    {r.Area}, {r.City}
+
+    {r.Area ? (
+      <a
+        href={`https://www.google.com/maps?q=${r.Latitude},${r.Longitude}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ color: "#16a34a" }}
+      >
+        📍 {r.Area}
+      </a>
+    ) : (
+      <span>Address: -</span>
+    )}
   </div>
 </Popup>
             </Marker>
