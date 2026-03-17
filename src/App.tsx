@@ -1,6 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Collect from "./pages/Collect";
 import Admin from "./pages/Admin";
+import AgentSignup from "./pages/AgentSignup";
+
 
 export default function App() {
   return (
@@ -8,6 +10,7 @@ export default function App() {
       <Route path="/collect" element={<Collect />} />
       <Route path="/admin" element={<Admin />} />
       <Route path="*" element={<Navigate to="/collect" />} />
+      <Route path="/agent-signup" element={<AgentSignup />} />
     </Routes>
   );
 }
