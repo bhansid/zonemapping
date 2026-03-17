@@ -193,48 +193,122 @@ export default function AgentSignup() {
         </div>
       )}
 
-      {signModal && <SignatureModal onClose={()=>setSignModal(false)} onSave={setSignature}/>}
+     {signModal && (
+  <SignatureModal
+    onClose={() => setSignModal(false)}
+    onSave={(data: string) => {
+      setSignature(data);
+      setSignModal(false); // ✅ CLOSE MODAL AFTER SAVE
+    }}
+  />
+)}
     </>
   );
 }
 
 /* SIGNATURE MODAL */
-function SignatureModal({onClose,onSave}:any){
-  const canvasRef=useRef<HTMLCanvasElement>(null);
-  const drawing=useRef(false);
+function SignatureModal({ onClose, onSave }: any) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const drawing = useRef(false);
 
-  function start(){drawing.current=true;canvasRef.current?.getContext("2d")?.beginPath();}
- function move(e:any){
-  if(!drawing.current) return;
+  function start(e: any) {
+    drawing.current = true;
 
-  const canvas = canvasRef.current;
-  if(!canvas) return;
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx) return;
 
-  const rect = canvas.getBoundingClientRect();
-  const ctx = canvas.getContext("2d");
-  if(!ctx) return;
+    ctx.beginPath();
 
-  const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-  const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    const rect = canvasRef.current!.getBoundingClientRect();
 
-  ctx.lineWidth = 2;
-  ctx.lineCap = "round";
+    const x =
+      (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    const y =
+      (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
 
-  ctx.lineTo(x, y);
-  ctx.stroke();
-}
-  function end(){drawing.current=false;}
-  function save(){onSave(canvasRef.current?.toDataURL("image/png"));}
+    ctx.moveTo(x, y);
+  }
+
+  function move(e: any) {
+    if (!drawing.current) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const x =
+      (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    const y =
+      (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  }
+
+  function end() {
+    drawing.current = false;
+  }
+
+  function save() {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    // ✅ Prevent empty signature
+    const blank = document.createElement("canvas");
+    blank.width = canvas.width;
+    blank.height = canvas.height;
+
+    if (canvas.toDataURL() === blank.toDataURL()) {
+      alert("Please sign first");
+      return;
+    }
+
+    const data = canvas.toDataURL("image/png");
+    onSave(data); // parent will close modal
+  }
+
+  function clear() {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    ctx?.clearRect(0, 0, canvas.width, canvas.height);
+  }
 
   return (
     <div style={overlay}>
       <div style={modalBox}>
-        <canvas ref={canvasRef} width={300} height={200}
-          style={{border:"1px solid #ccc",touchAction:"none"}}
-          onMouseDown={start} onMouseMove={move} onMouseUp={end}
-          onTouchStart={start} onTouchMove={move} onTouchEnd={end}/>
-        <button onClick={save}>Save</button>
-        <button onClick={onClose}>Cancel</button>
+        <h3>Signature</h3>
+
+        <canvas
+          ref={canvasRef}
+          width={300}
+          height={200}
+          style={{
+            border: "1px solid #ccc",
+            borderRadius: 6,
+            touchAction: "none",
+          }}
+          onMouseDown={start}
+          onMouseMove={move}
+          onMouseUp={end}
+          onMouseLeave={end}
+          onTouchStart={start}
+          onTouchMove={move}
+          onTouchEnd={end}
+        />
+
+        <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+          <button onClick={clear}>Clear</button>
+          <button onClick={save}>Save</button>
+          <button onClick={onClose}>Cancel</button>
+        </div>
       </div>
     </div>
   );
