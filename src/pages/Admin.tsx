@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import AdminMapView from "./AdminMapView";
 import AdminListView from "./AdminListView";
+import AdminAgentsView from "./AdminAgentsView";
 
 const API =
   "https://script.google.com/macros/s/AKfycbwcSAM75mzot0MPQT3Fu2qnryIcMY4ZacYF34yjrBIIwMHoaZ-qhtDa61eMTjynhI5axA/exec";
 
-type View = "map" | "list" | "zones";
+type View = "map" | "list" | "zones" | "agents";
 
 const ADMIN_PASSWORD = "ubonadmin";
 
@@ -54,7 +55,7 @@ export default function Admin() {
             boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
           }}
         >
-          <h2 style={{ marginBottom: 12 }}>UBON Admin Login</h2>
+          <h2 style={{ marginBottom: 12 }}>Admin Login</h2>
           <input
             type="password"
             placeholder="Admin password"
@@ -106,6 +107,9 @@ export default function Admin() {
         <button onClick={() => setView("zones")} style={btn(view === "zones")}>
           Zones
         </button>
+        <button onClick={() => setView("agents")} style={btn(view === "agents")}>
+           Agents
+        </button>
 
         <div style={{ flex: 1 }} />
 
@@ -137,6 +141,9 @@ export default function Admin() {
         {view === "list" && (
           <AdminListView retailers={retailers} />
         )}
+        {view === "agents" && (
+  <AdminAgentsView retailers={retailers} />
+)}
       </main>
     </div>
   );

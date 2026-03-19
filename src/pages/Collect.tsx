@@ -20,7 +20,7 @@ export default function Collect() {
     Phone: "",
     Shop_Type: "",
     Shop_Type_Other: "",
-    Area: "", // will act as Address
+    Area: "",
     City: "",
     State: "",
     Pincode: "",
@@ -129,6 +129,12 @@ export default function Collect() {
   }
 
   async function submit() {
+    // ✅ IMAGE REQUIRED VALIDATION
+    if (images.length === 0) {
+      alert("Please upload at least one shop image before submitting.");
+      return;
+    }
+
     setStatus("saving");
 
     try {
@@ -148,7 +154,7 @@ export default function Collect() {
       )}
 
       <div style={formWrap}>
-        <h2>MLife City Mapping</h2>
+        <h2>City Mapping</h2>
 
         <select
           disabled={loadingAgents}
@@ -182,7 +188,6 @@ export default function Collect() {
           onChange={e => update("Phone", e.target.value)}
         />
 
-        {/* ADDRESS FIELD */}
         <input
           placeholder="Address"
           value={form.Area}
@@ -190,7 +195,6 @@ export default function Collect() {
           onChange={e => update("Area", e.target.value)}
         />
 
-        {/* SHOP TYPE */}
         <select
           value={form.Shop_Type}
           disabled={loadingAgents}
@@ -226,7 +230,17 @@ export default function Collect() {
           onChange={e => setImages(Array.from(e.target.files || []))}
         />
 
-        <button disabled={loadingAgents || status==="saving"} onClick={submit}>
+        {/* ✅ ERROR MESSAGE */}
+        {images.length === 0 && (
+          <p style={{ color: "red", fontSize: 12 }}>
+            At least one image is required
+          </p>
+        )}
+
+        <button
+          disabled={loadingAgents || status==="saving" || images.length === 0}
+          onClick={submit}
+        >
           Save Retailer
         </button>
       </div>

@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import Header from "../components/Header";
 
 const API = "https://script.google.com/macros/s/AKfycbwcSAM75mzot0MPQT3Fu2qnryIcMY4ZacYF34yjrBIIwMHoaZ-qhtDa61eMTjynhI5axA/exec";
 
@@ -66,6 +67,7 @@ export default function AgentSignup() {
 
   return (
     <>
+   
       <div style={wrap}>
         <h2>Agent Registration</h2>
 
