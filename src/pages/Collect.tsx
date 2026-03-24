@@ -7,7 +7,9 @@ export default function Collect() {
   const [agents, setAgents] = useState<string[]>([]);
   const [loadingAgents, setLoadingAgents] = useState(true);
 
-  const [images, setImages] = useState<File[]>([]);
+  const [image1, setImage1] = useState<File | null>(null);
+  const [image2, setImage2] = useState<File | null>(null);
+
   const [status, setStatus] =
     useState<"idle" | "saving" | "success">("idle");
 
@@ -27,6 +29,7 @@ export default function Collect() {
     Latitude: "",
     Longitude: "",
     Assigned_Agent: "",
+    Shop_Status: "",
     Remarks: "",
   });
 
@@ -92,7 +95,11 @@ export default function Collect() {
   }
 
   async function proceedSave(lat: string, lng: string) {
-    const imgs = await Promise.all(images.map(toBase64));
+    const imgs = await Promise.all(
+      [image1, image2]
+        .filter(Boolean)
+        .map((f: any) => toBase64(f))
+    );
 
     await fetch(API, {
       method: "POST",
@@ -109,7 +116,9 @@ export default function Collect() {
 
     setTimeout(() => {
       setStatus("idle");
-      setImages([]);
+      setImage1(null);
+      setImage2(null);
+
       setForm({
         Retailer_Name: "",
         Owner_Name: "",
@@ -123,14 +132,14 @@ export default function Collect() {
         Latitude: "",
         Longitude: "",
         Assigned_Agent: "",
+        Shop_Status: "",
         Remarks: "",
       });
     }, 1500);
   }
 
   async function submit() {
-    // ✅ IMAGE REQUIRED VALIDATION
-    if (images.length === 0) {
+    if (!image1 && !image2) {
       alert("Please upload at least one shop image before submitting.");
       return;
     }
@@ -218,27 +227,54 @@ export default function Collect() {
           />
         )}
 
+        <select
+          value={form.Shop_Status}
+          disabled={loadingAgents}
+          onChange={e => update("Shop_Status", e.target.value)}
+        >
+          <option value="">Shop Status</option>
+          <option>Existing Client</option>
+          <option>Potential Lead</option>
+        </select>
+
         {form.Latitude && (
           <div>Lat: {form.Latitude}, Lng: {form.Longitude}</div>
         )}
 
         <label>Upload shop pictures</label>
-        <input
-          type="file"
-          multiple
-          disabled={loadingAgents}
-          onChange={e => setImages(Array.from(e.target.files || []))}
-        />
 
-        {/* ✅ ERROR MESSAGE */}
-        {images.length === 0 && (
+        <div style={imageRow}>
+          <div style={{ width: "100%" }}>
+            <input
+              style={{ width: "100%" }}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              disabled={loadingAgents}
+              onChange={e => setImage1(e.target.files?.[0] || null)}
+            />
+          </div>
+
+          <div style={{ width: "100%" }}>
+            <input
+              style={{ width: "100%" }}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              disabled={loadingAgents}
+              onChange={e => setImage2(e.target.files?.[0] || null)}
+            />
+          </div>
+        </div>
+
+        {!image1 && !image2 && (
           <p style={{ color: "red", fontSize: 12 }}>
             At least one image is required
           </p>
         )}
 
         <button
-          disabled={loadingAgents || status==="saving" || images.length === 0}
+          disabled={loadingAgents || status === "saving" || (!image1 && !image2)}
           onClick={submit}
         >
           Save Retailer
@@ -286,6 +322,13 @@ const formWrap = {
   display: "flex",
   flexDirection: "column" as const,
   gap: 10,
+};
+
+const imageRow = {
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  gap: 10,
+  width: "100%",
 };
 
 const overlay = {
