@@ -1,12 +1,16 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Header() {
+  const navigate = useNavigate();
+
   return (
     <div style={header}>
       <img
-        src="/logo.png" // place logo in public folder
+        src="/logo.png"
         alt="Logo"
         style={logo}
+        onClick={() => navigate("/")}
       />
     </div>
   );
@@ -17,7 +21,7 @@ const header = {
   padding: "10px 16px",
   display: "flex",
   alignItems: "center",
-   justifyContent: "center",
+  justifyContent: "center",
   borderBottom: "1px solid #eee",
   background: "#fff",
   position: "sticky" as const,
@@ -27,4 +31,5 @@ const header = {
 
 const logo = {
   height: 40,
+  cursor: "pointer",
 };

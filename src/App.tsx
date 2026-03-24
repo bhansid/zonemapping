@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Collect from "./pages/Collect";
 import Admin from "./pages/Admin";
 import AgentSignup from "./pages/AgentSignup";
+import Landing from "./pages/Landing";
 import Header from "./components/Header";
 
 export default function App() {
@@ -10,11 +11,12 @@ export default function App() {
       <Header />
 
       <Routes>
-      <Route path="/collect" element={<Collect />} />
-      <Route path="/admin" element={<Admin />} />
-      <Route path="*" element={<Navigate to="/collect" />} />
-      <Route path="/agent-signup" element={<AgentSignup />} />
-    </Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/collect" element={<Collect />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/agent-signup" element={<AgentSignup />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
     </>
   );
 }
