@@ -425,7 +425,7 @@ if (valid.length > 1) {
           valid.map((r: any, i: number) => (
             <Marker key={i} position={[+r.Latitude, +r.Longitude]}>
             <Popup>
-  <div style={{ minWidth: 200, lineHeight: "1.4" }}>
+  <div style={{ minWidth: 220, lineHeight: "1.4" }}>
     <strong>{r.Retailer_Name || "Unnamed Shop"}</strong>
     <br />
 
@@ -452,6 +452,30 @@ if (valid.length > 1) {
       </a>
     ) : (
       <span>Address: -</span>
+    )}
+
+    <br />
+
+    {r.Shop_Images && (
+      <span
+        style={{
+          color: "#9333ea",
+          fontWeight: 600,
+          cursor: "pointer"
+        }}
+        onClick={() => {
+          const imgs = r.Shop_Images
+            .split(",")
+            .map((x: string) => x.trim())
+            .filter(Boolean);
+
+          imgs.forEach((url: string) =>
+            window.open(url, "_blank")
+          );
+        }}
+      >
+        🖼 Shop Images
+      </span>
     )}
   </div>
 </Popup>

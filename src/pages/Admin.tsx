@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import AdminMapView from "./AdminMapView";
 import AdminListView from "./AdminListView";
 import AdminAgentsView from "./AdminAgentsView";
+import AdminOrdersView from "./AdminOrdersView";
+import AnalyticsView from "./AnalyticsView";
 
 const API =
   "https://script.google.com/macros/s/AKfycbwcSAM75mzot0MPQT3Fu2qnryIcMY4ZacYF34yjrBIIwMHoaZ-qhtDa61eMTjynhI5axA/exec";
 
-type View = "map" | "list" | "zones" | "agents";
+type View = "map" | "list" | "zones" | "agents" | "orders" | "analytics";
 
 const ADMIN_PASSWORD = "ubonadmin";
 
@@ -17,13 +19,18 @@ export default function Admin() {
     sessionStorage.getItem("ubon_admin_auth") === "yes"
   );
   const [password, setPassword] = useState("");
+const [orders, setOrders] = useState<any[]>([]);
 
   useEffect(() => {
     if (!authed) return;
 
-    fetch(`${API}?action=retailers`)
-      .then(r => r.json())
-      .then(d => setRetailers(d.data || []));
+fetch(`${API}?action=retailers`)
+  .then(r => r.json())
+  .then(d => setRetailers(d.data || []));
+
+fetch(`${API}?action=sales`)
+  .then(r => r.json())
+  .then(d => setOrders(d.data || []));
   }, [authed]);
 
   function login() {
@@ -110,6 +117,12 @@ export default function Admin() {
         <button onClick={() => setView("agents")} style={btn(view === "agents")}>
            Agents
         </button>
+        <button onClick={() => setView("orders")} style={btn(view === "orders")}>
+  Orders
+</button>
+{/* <button onClick={() => setView("analytics")} style={btn(view === "analytics")}>
+  Analytics
+</button> */}
 
         <div style={{ flex: 1 }} />
 
@@ -144,6 +157,10 @@ export default function Admin() {
         {view === "agents" && (
   <AdminAgentsView retailers={retailers} />
 )}
+{view === "orders" && (
+  <AdminOrdersView orders={orders} />
+)}
+
       </main>
     </div>
   );

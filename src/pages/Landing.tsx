@@ -12,6 +12,10 @@ export default function Landing() {
           Map a Shop
         </button>
 
+        <button style={btn} onClick={() => navigate("/register-sale")}>
+          Register Sale
+        </button>
+
         <button style={btn} onClick={() => navigate("/agent-signup")}>
           Register Agent
         </button>
