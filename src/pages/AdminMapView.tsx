@@ -18,6 +18,7 @@ const markerIcon2x = new URL(
   import.meta.url
 ).href;
 
+
 const markerIcon = new URL(
   "leaflet/dist/images/marker-icon.png",
   import.meta.url
@@ -272,6 +273,16 @@ export default function AdminMapView({
   retailers,
   zonesMode,
 }: any) {
+
+  const [shopTypeFilter, setShopTypeFilter] = useState("");
+
+const shopTypes = [
+  ...new Set(
+    retailers
+      .map((r: any) => r.Shop_Type)
+      .filter((t: any) => t && t.trim() !== "")
+  )
+];
   const [zones, setZones] = useState<any[]>([]);
   const [agents, setAgents] = useState<string[]>([]);
   const [selectedZone, setSelectedZone] = useState<any | null>(null);
@@ -422,8 +433,20 @@ if (valid.length > 1) {
         <AutoZoom latest={latest} />
 
         {!measureOn &&
-          valid.map((r: any, i: number) => (
-            <Marker key={i} position={[+r.Latitude, +r.Longitude]}>
+      valid
+  .filter((r: any) =>
+    !shopTypeFilter || r.Shop_Type === shopTypeFilter
+  )
+  .map((r: any, i: number) => (
+          <Marker
+  key={i}
+  position={[+r.Latitude, +r.Longitude]}
+  icon={
+  r.Shop_Type === "Naivas Supermarket"
+    ? redIcon
+    : new L.Icon.Default()
+}
+>
             <Popup>
   <div style={{ minWidth: 220, lineHeight: "1.4" }}>
     <strong>{r.Retailer_Name || "Unnamed Shop"}</strong>
@@ -496,8 +519,34 @@ if (valid.length > 1) {
           <DrawControls enabled onCreate={setNewZone} />
         )}
 
+       
+       
+       
         <MeasureTool enabled={measureOn} onDistance={setDistance} />
       </MapContainer>
+
+      <div
+  style={{
+    position: "absolute",
+    top: 16,
+    left: 16,
+    zIndex: 9999,
+    background: "#fff",
+    padding: "8px 10px",
+    borderRadius: 8,
+    boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
+  }}
+>
+  <select
+    value={shopTypeFilter}
+    onChange={(e) => setShopTypeFilter(e.target.value)}
+  >
+    <option value="">All Shop Types</option>
+    {shopTypes.map((t: string) => (
+      <option key={t}>{t}</option>
+    ))}
+  </select>
+</div>
 
       {/* MEASURE TOGGLE */}
       <button
@@ -662,3 +711,9 @@ const statsBox = {
   zIndex: 9999,
   fontWeight: 600,
 };
+const redIcon = new L.Icon({
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+  shadowUrl: markerShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});

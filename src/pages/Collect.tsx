@@ -215,6 +215,7 @@ export default function Collect() {
           <option>Mpesa agent</option>
           <option>General store</option>
           <option>Kiosk</option>
+          <option>Naivas Supermarket</option>
           <option>Other</option>
         </select>
 
@@ -315,6 +316,10 @@ export default function Collect() {
   );
 }
 
+
+
+
+
 const formWrap = {
   maxWidth: 420,
   margin: "0 auto",
@@ -360,3 +365,5 @@ const modalBox = {
   width: 300,
   textAlign: "center" as const,
 };
+
+
